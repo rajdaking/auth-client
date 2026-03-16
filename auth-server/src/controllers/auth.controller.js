@@ -1,4 +1,4 @@
-const { registerUser, loginUser } = require('../services/auth.service');
+const { registerUser, loginUser, refreshTokens, logoutUser } = require('../services/auth.service');
 
 const register = async (req, res) => {
   try {
@@ -61,4 +61,47 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login };
+const refresh = async (req, res) => {
+  try {
+    // Read refresh token from httpOnly cookie
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      return res.status(401).json({ error: 'No refresh token provided' });
+    }
+
+    const { user, accessToken, refreshToken: newRefreshToken } = await refreshTokens(refreshToken);
+
+    // Set new refresh token cookie
+    res.cookie('refreshToken', newRefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
+    res.json({ user, accessToken });
+
+  } catch (err) {
+    res.clearCookie('refreshToken');
+    if (err.message === 'Invalid refresh token' || err.message === 'Refresh token expired') {
+      return res.status(401).json({ error: err.message });
+    }
+    console.error('Refresh error:', err.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+const logout = async (req, res) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+    await logoutUser(refreshToken);
+    res.clearCookie('refreshToken');
+    res.json({ message: 'Logged out successfully' });
+  } catch (err) {
+    console.error('Logout error:', err.message);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+module.exports = { register, login, refresh, logout };

@@ -108,4 +108,64 @@ const loginUser = async (email, password) => {
   };
 };
 
-module.exports = { registerUser, loginUser };
+const refreshTokens = async (refreshToken) => {
+
+  // Hash the incoming token to compare against DB
+  const tokenHash = crypto
+    .createHash('sha256')
+    .update(refreshToken)
+    .digest('hex');
+
+  // Look up the token in DB
+  const result = await pool.query(
+    `SELECT rt.*, u.email, u.role
+     FROM refresh_tokens rt
+     JOIN users u ON rt.user_id = u.id
+     WHERE rt.token_hash = $1`,
+    [tokenHash]
+  );
+
+  const storedToken = result.rows[0];
+
+  // Token not found — possible reuse attack
+  if (!storedToken) {
+    throw new Error('Invalid refresh token');
+  }
+
+  // Token expired
+  if (new Date() > new Date(storedToken.expires_at)) {
+    await pool.query('DELETE FROM refresh_tokens WHERE id = $1', [storedToken.id]);
+    throw new Error('Refresh token expired');
+  }
+
+  // Delete the used token (rotation — every refresh gets a new token)
+  await pool.query('DELETE FROM refresh_tokens WHERE id = $1', [storedToken.id]);
+
+  // Issue a new token pair
+  const user = {
+    id: storedToken.user_id,
+    email: storedToken.email,
+    role: storedToken.role
+  };
+
+  const tokens = await generateTokens(user);
+
+  return { user, ...tokens };
+};
+
+const logoutUser = async (refreshToken) => {
+
+  if (!refreshToken) return;
+
+  const tokenHash = crypto
+    .createHash('sha256')
+    .update(refreshToken)
+    .digest('hex');
+
+  await pool.query(
+    'DELETE FROM refresh_tokens WHERE token_hash = $1',
+    [tokenHash]
+  );
+};
+
+module.exports = { registerUser, loginUser, refreshTokens, logoutUser };
