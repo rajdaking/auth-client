@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const db = require('./src/config/db.js');
+const oauthRoutes = require('./src/routes/oauth.routes');
 require('dotenv').config();
 
 const authRoutes = require('./src/routes/auth.routes');
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/auth', authRoutes);
+app.use('/auth', oauthRoutes);
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 

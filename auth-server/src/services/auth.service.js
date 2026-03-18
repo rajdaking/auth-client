@@ -168,4 +168,4 @@ const logoutUser = async (refreshToken) => {
   );
 };
 
-module.exports = { registerUser, loginUser, refreshTokens, logoutUser };
+module.exports = { registerUser, loginUser, refreshTokens, logoutUser, generateTokens };

@@ -73,6 +73,29 @@ export default function Login() {
           Don't have an account?{' '}
           <Link to="/register" style={styles.link}>Register</Link>
         </p>
+
+        <div style={{ marginTop: '16px', textAlign: 'center' }}>
+          <div style={{ color: '#94a3b8', fontSize: '12px', marginBottom: '12px' }}>
+            OR
+          </div>
+          
+            <a href="http://localhost:3000/auth/google"
+            style={{
+              display: 'block',
+              padding: '11px',
+              borderRadius: '8px',
+              border: '1px solid #e2e8f0',
+              background: '#ffffff',
+              color: '#0f172a',
+              fontSize: '14px',
+              fontWeight: '600',
+              textDecoration: 'none',
+              textAlign: 'center',
+            }}>
+            Continue with Google
+          </a>
+        </div>
+        
       </div>
     </div>
   );

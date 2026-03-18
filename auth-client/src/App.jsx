@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Unauthorized from './pages/Unauthorized';
+import OAuthCallback from './pages/OAuthCallback';
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="/oauth/callback" element={<OAuthCallback />} />
           <Route
             path="/dashboard"
             element={
