@@ -2,7 +2,6 @@
 
 A full stack authentication system built from scratch.
 
----
 ## What This Project Covers
 
 This project implements a production grade authentication system with:
@@ -17,7 +16,6 @@ This project implements a production grade authentication system with:
 
 - **Silent Token Refresh** — expired tokens are swapped transparently via axios interceptor
 
----
 ## Tech Stack
 
 | Layer    | Technology                          |
@@ -28,7 +26,6 @@ This project implements a production grade authentication system with:
 | Auth     | JWT, bcryptjs                       |
 | OAuth    | Google OAuth 2.0                    |
 
----
 ## Architecture
 
 ```
@@ -77,7 +74,6 @@ Client → API Gateway (rate limiter) → Route → Controller → Service → P
 
 ```
 
----
 ## Database Schema
 
 ```sql
@@ -92,7 +88,6 @@ login_attempts      -- ip, email, created_at
 
 ```
 
----
 ## Auth Flows
 
 ### Register
@@ -161,7 +156,6 @@ login_attempts      -- ip, email, created_at
 
 7. Original request retried transparently
 
----
 ## API Reference
 ### Auth Endpoints
 
@@ -173,7 +167,6 @@ login_attempts      -- ip, email, created_at
 | POST   | /auth/logout   | Invalidate refresh token  |
 | GET    | /auth/me       | Get current user          |
 
----
 ## Running Locally
 
 ### Prerequisites
@@ -260,7 +253,6 @@ npm run dev
 
 Open `http://localhost:5173`
 
----
 ## Future Improvements
 
 - GitHub OAuth provider
